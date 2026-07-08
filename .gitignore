@@ -1,0 +1,15 @@
+.env
+
+.venv/
+
+__pycache__/
+*.pyc
+
+neo4j-community-5.26.0/
+neo4j-community-5.26.0-windows.zip
+
+.claude/
+
+# Internal working notes — not part of the published repo (see README.md instead)
+PROJECT_PLAN.md
+lessons.md
