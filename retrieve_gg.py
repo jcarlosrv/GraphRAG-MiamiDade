@@ -75,9 +75,6 @@ DESC_CHARS = 600                      # truncate each division description in th
 NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
 NEO4J_USER = os.environ.get("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
-if not NEO4J_PASSWORD:
-    print("ERROR: NEO4J_PASSWORD not set. Copy .env.example to .env and fill it in.", file=sys.stderr)
-    sys.exit(2)
 
 SYSTEM_PROMPT = """\
 You answer questions about Miami-Dade County's General Government using ONLY the \
@@ -309,6 +306,10 @@ def main() -> int:
                     help="Print the retrieved/assembled context and skip the LLM call.")
     ap.add_argument("--model", default=SYNTH_MODEL, help=f"Synthesis model (default {SYNTH_MODEL}).")
     args = ap.parse_args()
+
+    if not NEO4J_PASSWORD:
+        print("ERROR: NEO4J_PASSWORD not set. Copy .env.example to .env and fill it in.", file=sys.stderr)
+        return 2
 
     # Windows consoles default to cp1252; model output and arrows need UTF-8.
     try:
