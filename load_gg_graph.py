@@ -27,7 +27,7 @@ import pandas as pd
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-load_dotenv(r"C:\Users\jcarl\Quant16\Others\GraphRAG\.env")
+load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 
 XLSX = "General_Government.xlsx"
 SECTOR = "General Government"

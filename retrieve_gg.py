@@ -52,7 +52,7 @@ import anthropic
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-load_dotenv(r"C:\Users\jcarl\Quant16\Others\GraphRAG\.env")
+load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 
 EMBED_MODEL = "all-MiniLM-L6-v2"      # MUST match embed_gg_divisions.py
 INDEX_NAME = "division_text_embeddings"

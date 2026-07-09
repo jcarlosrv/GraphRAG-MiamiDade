@@ -36,7 +36,7 @@ import argparse
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-load_dotenv(r"C:\Users\jcarl\Quant16\Others\GraphRAG\.env")
+load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 
 MODEL_NAME = "all-MiniLM-L6-v2"   # local sentence-transformers model (384 dims)
 VECTOR_PROP = "text_embedding"    # leaves room for a separate financial_vector later

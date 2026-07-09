@@ -38,7 +38,7 @@ from pydantic import BaseModel, Field
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-load_dotenv(r"C:\Users\jcarl\Quant16\Others\GraphRAG\.env")
+load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 
 MODEL = "claude-sonnet-4-6"  # extraction model — project decision (PROJECT_PLAN.md)
 MAX_TOKENS = 8000

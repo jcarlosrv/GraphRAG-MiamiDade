@@ -23,6 +23,8 @@ pip install -r requirements.txt
 
 Create a `.env` (see `.env.example`) with `ANTHROPIC_API_KEY`, `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`. **Do not** put `.env` inside a cloud-synced folder (OneDrive/SharePoint) — secrets there can be scanned/removed by corporate DLP.
 
+If your `.env` lives outside this repo's directory tree, set `GRAPHRAG_ENV_PATH` to its full path (all scripts call `load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))`, which falls back to `load_dotenv()`'s default cwd/parent-directory search when unset).
+
 ## Run
 
 ```
