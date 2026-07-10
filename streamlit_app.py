@@ -12,6 +12,7 @@ from st.secrets first (Streamlit Community Cloud), falling back to the local
 Run locally:
     streamlit run streamlit_app.py
 """
+import datetime
 
 import os
 
@@ -98,6 +99,39 @@ def get_embedder():
 def get_anthropic_client():
     return anthropic.Anthropic()
 
+# --- Public-demo guardrails -------------------------------------------------
+# This app calls the Anthropic API on every question, so an open URL is an
+# open-ended bill. Caps below bound per-visitor and total daily usage. The hard
+# backstop is a spend limit set in the Anthropic Console (independent of this code).
+MAX_QUERIES_PER_SESSION = 8
+MAX_QUERIES_PER_DAY = 200          # shared across visitors; best-effort
+MAX_QUESTION_CHARS = 300
+
+@st.cache_resource(show_spinner=False)
+def _global_usage():
+    # Shared across sessions while the container is warm. Resets when the
+    # Streamlit Cloud container sleeps/restarts — i.e. only after idle time.
+    return {"date": datetime.date.today(), "count": 0}
+
+
+def _within_quota() -> bool:
+    usage = _global_usage()
+    today = datetime.date.today()
+    if usage["date"] != today:
+        usage["date"], usage["count"] = today, 0
+
+    st.session_state.setdefault("query_count", 0)
+    if st.session_state["query_count"] >= MAX_QUERIES_PER_SESSION:
+        st.warning(f"Session limit reached ({MAX_QUERIES_PER_SESSION} questions). "
+                   "Reload the page to start a new session — this is a cost-capped public demo.")
+        return False
+    if usage["count"] >= MAX_QUERIES_PER_DAY:
+        st.warning("The demo has hit its daily question cap. Please check back tomorrow.")
+        return False
+
+    usage["count"] += 1
+    st.session_state["query_count"] += 1
+    return True
 
 def build_subgraph_html(result, max_entities_per_division) -> str:
     div_keys = [d["key"] for d in result["divisions"]]
@@ -131,14 +165,14 @@ def build_subgraph_html(result, max_entities_per_division) -> str:
     return net.generate_html()
 
 
-st.title("\U0001F3DB Miami-Dade General Government — GraphRAG")
+st.title("Miami-Dade General Government — GraphRAG")
 st.caption("Vector search → graph expansion → exact Cypher aggregation → Claude synthesis.")
 
 with st.sidebar:
     st.header("Retrieval settings")
     k = st.slider("Divisions (vector search top-k)", 1, 10, 5)
     entity_k = st.slider("Entity matches (0 disables)", 0, 10, 5)
-    model = st.selectbox("Synthesis model", [rag.SYNTH_MODEL, "claude-opus-4-8"], index=0)
+    model = rag.SYNTH_MODEL
     show_graph = st.checkbox("Show subgraph visualization", value=True)
     max_entities_per_division = st.slider("Max entities shown per division", 3, 20, 8)
 
@@ -151,6 +185,11 @@ if ask:
         st.stop()
     if not os.environ.get("ANTHROPIC_API_KEY"):
         st.error("ANTHROPIC_API_KEY not set. Add it to Streamlit secrets or your local .env.")
+        st.stop()
+    if len(question) > MAX_QUESTION_CHARS:
+        st.error(f"Question too long (max {MAX_QUESTION_CHARS} characters).")
+        st.stop()
+    if not _within_quota():
         st.stop()
 
     try:
