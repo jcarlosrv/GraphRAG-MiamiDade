@@ -2,6 +2,16 @@
 
 GraphRAG over Miami-Dade County's General Government sector budget data, backed by Neo4j Aura.
 
+**[▶ Live demo](https://graphrag-miamidade-demo.streamlit.app/)** — ask a natural-language question and watch vector search → graph expansion → exact Cypher aggregation → Claude synthesis, with the retrieved subgraph rendered live.
+
+*Synthesized answer, grounded in the retrieved divisions with exact FTE figures:*
+
+![Synthesized answer](docs/q1.png)
+
+*The retrieved subgraph — Divisions (boxes) and their extracted Entities (colored by type), with MENTIONS and RELATES_TO edges:*
+
+![Retrieved subgraph](docs/q2.png)
+
 ## Architecture
 
 ```
