@@ -22,7 +22,7 @@ Resumable + idempotent: each Division is flagged `embedded = true` on success
 and skipped on re-run; the index is created IF NOT EXISTS.
 
 Run:
-    # ensure Neo4j is running (see PROJECT_PLAN.md runbook), then:
+    # ensure Neo4j is running, then:
     python embed_gg_divisions.py                 # embed all not-yet-done divisions
     python embed_gg_divisions.py --force         # re-embed everything
     python embed_gg_divisions.py --query "cybersecurity and data protection"
@@ -132,7 +132,7 @@ def connect():
         driver.verify_connectivity()
     except Exception as e:
         print(f"ERROR: cannot reach Neo4j at {NEO4J_URI} ({e}).\n"
-              "  Start it per the PROJECT_PLAN.md runbook, then re-run.", file=sys.stderr)
+              "  Start Neo4j, then re-run.", file=sys.stderr)
         sys.exit(3)
     return driver
 

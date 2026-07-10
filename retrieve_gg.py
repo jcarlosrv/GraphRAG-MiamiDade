@@ -20,7 +20,7 @@ The pipeline, end to end:
       ▼
     Claude  →  answer that cites divisions and uses the EXACT figures
 
-Design decisions (see PROJECT_PLAN.md "RESUME HERE"):
+Design decisions:
 - Vector + entity search both find entry points only. Exact numbers come from
   Cypher aggregation over the merged retrieved set (and its department
   rollup), never from the LLM doing arithmetic in its head and never from a
@@ -57,8 +57,8 @@ load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 EMBED_MODEL = "all-MiniLM-L6-v2"      # MUST match embed_gg_divisions.py
 INDEX_NAME = "division_text_embeddings"
 ENTITY_INDEX_NAME = "entity_fulltext"
-# Two-part filter, empirically calibrated against this ~500-entity corpus (see
-# lessons.md): a REAL name match (e.g. "Implementing Order 2-5") scores well
+# Two-part filter, empirically calibrated against this ~500-entity corpus:
+# a REAL name match (e.g. "Implementing Order 2-5") scores well
 # above the rest with a sharp gap (17.6 vs 8.9 for the runner-up). A query with
 # no true entity in the corpus (e.g. "Florida Statutes", which isn't actually
 # extracted anywhere) instead produces a flat, gently-decaying tail of generic
@@ -326,7 +326,7 @@ def main() -> int:
         driver.verify_connectivity()
     except Exception as e:
         print(f"ERROR: cannot reach Neo4j at {NEO4J_URI} ({e}).\n"
-              "  Start it per the PROJECT_PLAN.md runbook, then re-run.", file=sys.stderr)
+              "  Start Neo4j, then re-run.", file=sys.stderr)
         return 3
 
     from sentence_transformers import SentenceTransformer

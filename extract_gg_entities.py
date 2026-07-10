@@ -21,7 +21,7 @@ and skipped on re-run; all writes are MERGE.
 
 Run:
     ANTHROPIC_API_KEY in .env
-    # ensure Neo4j is running (see PROJECT_PLAN.md runbook), then:
+    # ensure Neo4j is running, then:
     python extract_gg_entities.py            # extract all not-yet-done divisions
     python extract_gg_entities.py --force    # re-extract everything (clears flags)
 """
@@ -40,7 +40,7 @@ from dotenv import load_dotenv
 
 load_dotenv(os.environ.get("GRAPHRAG_ENV_PATH"))
 
-MODEL = "claude-sonnet-4-6"  # extraction model — project decision (PROJECT_PLAN.md)
+MODEL = "claude-sonnet-4-6"  # extraction model
 MAX_TOKENS = 8000
 
 NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
@@ -51,7 +51,7 @@ if not NEO4J_PASSWORD:
     sys.exit(2)
 
 # ----------------------------------------------------------------------------
-# Extraction schema — fixed 6-type taxonomy (PROJECT_PLAN.md "Phase 2 spec")
+# Extraction schema — fixed 6-type taxonomy
 # ----------------------------------------------------------------------------
 
 class EntityType(str, Enum):
@@ -223,7 +223,7 @@ def main() -> int:
         driver.verify_connectivity()
     except Exception as e:
         print(f"ERROR: cannot reach Neo4j at {NEO4J_URI} ({e}).\n"
-              "  Start it per the PROJECT_PLAN.md runbook, then re-run.", file=sys.stderr)
+              "  Start Neo4j, then re-run.", file=sys.stderr)
         return 3
 
     with driver.session() as session:
